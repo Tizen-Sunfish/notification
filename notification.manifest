@@ -9,6 +9,7 @@
 		<filesystem path="/usr/lib/libnotification.so.0.1.0" label="_"/>
 		<filesystem path="/usr/lib/libnotification.so.0" label="_"/>
 		<filesystem path="/usr/lib/libnotification.so" label="_"/>
+		<filesystem path="/usr/share/nodejs" label="_"/>
 	</assign>
 	<request>
 	    <domain name="notification"/>

@@ -43,6 +43,8 @@
 #include <notification_group.h>
 #include <notification_ipc.h>
 
+#include "stdlib.h"
+
 typedef struct _notification_cb_list notification_cb_list_s;
 
 typedef enum __notification_cb_type {
@@ -1826,16 +1828,22 @@ EXPORT_API notification_error_e notification_insert(notification_h noti,
 	// Notify to Extensible Hardware Framework
 	{
 		FILE* fp = NULL;
+		char str_none[]="<none>";
 		char *title = NULL, *content = NULL;
 		notification_led_op_e led_op = -1;
-		int led_argb;
-		fp = fopen("/usr/share/nodejs/ehf_notification.tail", "a+");
+		int led_argb = 0;
+#define EHF_FILE "/usr/share/nodejs/ehf_notification.tail"
+		fp = fopen(EHF_FILE, "a+");
 		if(fp != NULL) {
 			notification_get_title(noti, &title, NULL);
 			notification_get_content(noti, &content, NULL);
 			notification_get_led(noti, &led_op, &led_argb);
+			if(title == NULL)
+				title = str_none;
+			if(content == NULL)
+				content = str_none;
 			if(title != NULL && content != NULL)
-				fprintf(fp, "%d %s %s\n", led_argb, title, content);
+				fprintf(fp, "0___ %d\n1___ %s\n2___ %s\n", led_argb, title, content);
 			fclose(fp);
 		}
 	}
