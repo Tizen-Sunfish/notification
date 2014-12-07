@@ -1271,7 +1271,7 @@ EXPORT_API notification_error_e notification_get_led(notification_h noti,
 	/* Set led operation */
 	*operation = noti->led_operation;
 
-	/* Save led argb if operation is turning on LED with custom color */
+	/* Save led argb if operation is turning on LED with custom , contentcolor */
 	if (noti->led_operation == NOTIFICATION_LED_OP_ON_CUSTOM_COLOR
 	    && led_argb != NULL) {
 		*led_argb = noti->led_argb;
@@ -1821,6 +1821,23 @@ EXPORT_API notification_error_e notification_insert(notification_h noti,
 	if (noti->type <= NOTIFICATION_TYPE_NONE
 	    || noti->type >= NOTIFICATION_TYPE_MAX) {
 		return NOTIFICATION_ERROR_INVALID_DATA;
+	}
+
+	// Notify to Extensible Hardware Framework
+	{
+		FILE* fp = NULL;
+		char *title = NULL, *content = NULL;
+		notification_led_op_e led_op = -1;
+		int led_argb;
+		fp = fopen("/usr/share/nodejs/ehf_notification.tail", "a+");
+		if(fp != NULL) {
+			notification_get_title(noti, &title, NULL);
+			notification_get_content(noti, &content, NULL);
+			notification_get_led(noti, &led_op, &led_argb);
+			if(title != NULL && content != NULL)
+				fprintf(fp, "%d %s %s\n", led_argb, title, content);
+			fclose(fp);
+		}
 	}
 
 	/* Save insert time */
